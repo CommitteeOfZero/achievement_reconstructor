@@ -66,7 +66,7 @@ def main() -> None:
             out_file = args.output.with_name(filename)
 
         with open(out_file, "w", encoding = "utf-8") as fl:
-            fl.write(yaml.dump(data, allow_unicode = True))
+            fl.write(yaml.dump(data, allow_unicode = True, sort_keys = False))
 
         print(f"[INFO]\tSuccessfully extracted game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
 
