@@ -1,9 +1,9 @@
-
 from pathlib import Path
 from itertools import takewhile
 import struct
 
 from typing import Self
+
 class Reader:
     def __init__(self : Self, path : Path):
         self.contents : bytes

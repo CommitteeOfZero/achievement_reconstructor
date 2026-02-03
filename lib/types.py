@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import IntEnum, auto
 
 from typing import Self, Any
 from ruamel.yaml import YAML
@@ -7,12 +7,30 @@ yaml = YAML()
 yaml.encoding = "utf-8"
 
 class YamlScalar:
-    def __init__(self : Self, value : int | float) -> None:
-        self.value = value
+    __match_args__ = ("value",)
     
+    def __init__(self : Self, value : Any) -> None:
+        if not isinstance(value, int) and not isinstance(value, float):
+            raise ValueError(f"{ self.__class__.__name__ } expected scalar value, got \"{ type(value).__name__ }\".")
+        
+        self.value : int | float = value
+        
     @classmethod
-    def __init_subclass__(cls) -> None:
+    def __init_subclass__(cls : type[Self]) -> None:
         yaml.register_class(cls)
+
+    @classmethod
+    def from_yaml(cls : type[Self], constructor : Any, node : Any) -> Self:
+        value : float | int
+
+        try:
+            value = float(node.value)
+        except ValueError:
+            raise
+
+        if value.is_integer(): value = int(value)
+
+        return cls(value)
 
     @classmethod
     def to_yaml(cls : type[Self], representer : Any, node : Any):
@@ -24,8 +42,8 @@ class Pointer(YamlScalar):  ...
 class Color(YamlScalar):    ...
 class UInt64(YamlScalar):   ...
 
-class KeyType(Enum):
-    NONE = 0
+class ValueType(IntEnum):
+    MAPPING_BEGIN = 0
     STRING = auto()
     INT32 = auto()
     FLOAT32 = auto()
@@ -33,4 +51,4 @@ class KeyType(Enum):
     WIDESTRING = auto()
     COLOR = auto()
     UINT64 = auto()
-    END = auto()
+    MAPPING_END = auto()
