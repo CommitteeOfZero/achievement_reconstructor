@@ -66,8 +66,11 @@ def main() -> None:
             out_file = args.output.with_name(filename)
 
         yaml = YAML()
+        yaml.encoding = "utf-8"
         yaml.preserve_quotes = True
-        yaml.dump(data, out_file) # type: ignore
+
+        with open(out_file, "w", encoding = "utf-8") as fl:
+            yaml.dump(data, fl) # type: ignore
 
         print(f"[INFO]\tSuccessfully extracted game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
 

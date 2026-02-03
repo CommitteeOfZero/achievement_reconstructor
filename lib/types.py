@@ -4,6 +4,7 @@ from typing import Self, Any
 from ruamel.yaml import YAML
 
 yaml = YAML()
+yaml.encoding = "utf-8"
 
 class YamlScalar:
     def __init__(self : Self, value : int | float) -> None:
