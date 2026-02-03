@@ -69,7 +69,7 @@ class YamlDumper:
                     case dict():
                         self.writer.write_uint8(ValueType.MAPPING_BEGIN)
                         self.writer.write_utf8_string(key)
-                        self.dump(cast(dict[str, Any], value))
+                        inner(cast(dict[str, Any], value))
                         self.writer.write_uint8(ValueType.MAPPING_END)
                     case str() as string:
                         self.writer.write_uint8(ValueType.STRING)

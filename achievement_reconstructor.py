@@ -57,7 +57,7 @@ def main() -> None:
         data : dict[str, Any]
 
         try:
-            dumper = dumper.dump()
+            data = dumper.dump()
         except EOFError:
             print("[ERROR]\tUnexpected end of file.")
             sys.exit(1)
@@ -111,7 +111,7 @@ def main() -> None:
         dumper = YamlDumper(out_file)
         dumper.dump(data)
 
-        print(f"[INFO]\tSuccessfully extracted game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
+        print(f"[INFO]\tSuccessfully encoded game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
 
 if __name__ == "__main__":
     main()
