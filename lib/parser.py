@@ -1,20 +1,11 @@
 from typing import Self, Any
-from enum import Enum, auto
 from pathlib import Path
 import re
 
-from .reader import Reader
+from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
-class KeyType(Enum):
-    NONE = 0
-    STRING = auto()
-    INT32 = auto()
-    FLOAT32 = auto()
-    POINTER = auto()
-    WIDESTRING = auto()
-    COLOR = auto()
-    UINT64 = auto()
-    END = auto()
+from .reader import Reader
+from .types import Int32, Float32, UInt64, Pointer, Color, KeyType
 
 class Parser:
     def __init__(self : Self, path : Path):
@@ -39,21 +30,24 @@ class Parser:
             key_type = self.get_key_type()
             if (key_type == KeyType.END): break
 
-            key = self.reader.read_utf8_string()
+            key : str = self.reader.read_utf8_string()
+            if key.isnumeric(): key = DQ(key)
 
             match key_type:
                 case KeyType.NONE:
                     ret[key] = self.parse()
                 case KeyType.STRING:
-                    ret[key] = self.reader.read_utf8_string()
+                    ret[key] = DQ(self.reader.read_utf8_string())
                 case KeyType.INT32:
-                    ret[key] = self.reader.read_int32_le()
+                    ret[key] = Int32(self.reader.read_int32_le())
                 case KeyType.FLOAT32:
-                    ret[key] = self.reader.read_float32_le()
-                case KeyType.POINTER | KeyType.COLOR:
-                    ret[key] = self.reader.read_uint32_le()
+                    ret[key] = Float32(self.reader.read_float32_le())
+                case KeyType.POINTER:
+                    ret[key] = Pointer(self.reader.read_uint32_le())
+                case KeyType.COLOR:
+                    ret[key] = Color(self.reader.read_uint32_le())
                 case KeyType.UINT64:
-                    ret[key] = self.reader.read_uint64_le()
+                    ret[key] = UInt64(self.reader.read_uint64_le())
                 case _:
                     raise NotImplementedError()
 

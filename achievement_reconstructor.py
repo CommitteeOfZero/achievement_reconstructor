@@ -3,7 +3,7 @@ import argparse, sys, re
 
 from typing import Any
 
-import yaml
+from ruamel.yaml import YAML
 
 from lib.parser import Parser
 
@@ -65,8 +65,9 @@ def main() -> None:
             print("[WARN]\tFile path specified; Ignoring supplied filename.")
             out_file = args.output.with_name(filename)
 
-        with open(out_file, "w", encoding = "utf-8") as fl:
-            fl.write(yaml.dump(data, allow_unicode = True, sort_keys = False))
+        yaml = YAML()
+        yaml.preserve_quotes = True
+        yaml.dump(data, out_file) # type: ignore
 
         print(f"[INFO]\tSuccessfully extracted game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
 
