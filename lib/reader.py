@@ -17,7 +17,7 @@ class Reader:
     
     def __read_raw(self : Self, size : int) -> bytes:
         if len(self.contents) < self.pointer + size:
-            raise EOFError
+            raise EOFError("Attempted to read past end of file.")
         
         ret : bytes = self.contents[self.pointer : self.pointer + size]
         self.pointer += size
@@ -25,7 +25,7 @@ class Reader:
 
     def peek(self : Self) -> bytes:
         if len(self.contents) < self.pointer + 1:
-            raise EOFError
+            raise EOFError("Attempted to read past end of file.")
         
         return self.contents[self.pointer : self.pointer + 1]
 
@@ -49,7 +49,6 @@ class Reader:
         string : str = raw_string.decode("utf-8")
         self.pointer += len(raw_string) + 1
 
-        assert self.pointer <= len(self.contents), "Read past ends of array"
-        if self.pointer < len(self.contents): return string
-        if self.pointer == len(self.contents) and self.contents[-1] == 0: return string
-        raise EOFError
+        assert self.pointer < len(self.contents), "Read past ends of array"
+        if self.contents[self.pointer - 1] == 0: return string
+        raise EOFError("Expected null-terminated UTF-8 string, reached EOF instead.")

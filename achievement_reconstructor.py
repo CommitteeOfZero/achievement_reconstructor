@@ -1,8 +1,6 @@
 from pathlib import Path
 import argparse, sys, re
 
-from typing import Any
-
 from ruamel.yaml import YAML
 
 from lib.dumpers import BinaryDumper, YamlDumper
@@ -42,7 +40,9 @@ def main() -> None:
     )
 
     args = argparser.parse_args(sys.argv[1:])
+    
     in_file : Path
+    data : dict[str, object]
 
     if (in_file := args.deconstruct):
         if not in_file.exists():
@@ -54,18 +54,11 @@ def main() -> None:
             sys.exit(1)
         
         dumper = BinaryDumper(in_file)
-        data : dict[str, Any]
 
         try:
             data = dumper.dump()
-        except EOFError:
-            print("[ERROR]\tUnexpected end of file.")
-            sys.exit(1)
-        except ValueError as e:
-            print(f"[ERROR]\tUnexpected value found while parsing file: { e }")
-            sys.exit(1)
-        except NotImplementedError:
-            print(f"[ERROR]\tWide strings are not supported.")
+        except Exception as e :
+            print(f"[ERROR]\t{ e.args[0] }")
             sys.exit(1)
         
         out_file : Path
@@ -91,8 +84,6 @@ def main() -> None:
             print("[ERROR]\tFile name does not conform to schema name.")
             sys.exit(1)
         
-        data : dict[str, Any]
-
         try:
             with open(in_file, "r", encoding = "utf-8") as fl:
                 data = yaml.load(fl)
@@ -109,7 +100,12 @@ def main() -> None:
             out_file = args.output.with_name(filename)
 
         dumper = YamlDumper(out_file)
-        dumper.dump(data)
+
+        try:
+            dumper.dump(data)
+        except Exception as e:
+            print(f"[ERROR]\t{ e.args[0] }")
+            sys.exit(1)
 
         print(f"[INFO]\tSuccessfully encoded game achievement schema to { out_file.relative_to(Path("."), walk_up = True) }.")
 
