@@ -30,13 +30,13 @@ class BinaryDumper:
 
         while True:
             value_type = self.get_value_type()
-            if (value_type == ValueType.MAPPING_END): break
+            if (value_type == ValueType.END): break
 
             key : str = self.reader.read_utf8_string()
             if key.isnumeric(): key = DQ(key)
 
             match value_type:
-                case ValueType.MAPPING_BEGIN:
+                case ValueType.BEGIN:
                     ret[key] = self.dump()
                 case ValueType.STRING:
                     ret[key] = DQ(self.reader.read_utf8_string())
@@ -67,10 +67,10 @@ class YamlDumper:
             for key, value in data.items():
                 match value:
                     case dict():
-                        self.writer.write_uint8(ValueType.MAPPING_BEGIN)
+                        self.writer.write_uint8(ValueType.BEGIN)
                         self.writer.write_utf8_string(key)
                         inner(cast(dict[str, Any], value))
-                        self.writer.write_uint8(ValueType.MAPPING_END)
+                        self.writer.write_uint8(ValueType.END)
                     case str() as string:
                         self.writer.write_uint8(ValueType.STRING)
                         self.writer.write_utf8_string(key)
@@ -103,5 +103,5 @@ class YamlDumper:
                     case _:
                         raise NotImplementedError
         inner(data)
-        self.writer.write_uint8(ValueType.MAPPING_END)
+        self.writer.write_uint8(ValueType.END)
                 

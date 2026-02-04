@@ -43,7 +43,7 @@ class Color(YamlScalar):    ...
 class UInt64(YamlScalar):   ...
 
 class ValueType(IntEnum):
-    MAPPING_BEGIN = 0
+    BEGIN = 0
     STRING = auto()
     INT32 = auto()
     FLOAT32 = auto()
@@ -51,4 +51,4 @@ class ValueType(IntEnum):
     WIDESTRING = auto()
     COLOR = auto()
     UINT64 = auto()
-    MAPPING_END = auto()
+    END = auto()
