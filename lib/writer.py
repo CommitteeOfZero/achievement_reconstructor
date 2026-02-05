@@ -30,5 +30,6 @@ class Writer:
         return self.__write_raw(struct.pack("<Q", value))
     
     def write_utf8_string(self : Self, value : str):
+        assert len(value) <= 128
         raw_string : bytes = value.encode("utf-8") + b"\x00"
         return self.__write_raw(raw_string)

@@ -73,6 +73,8 @@ class YamlDumper:
                         inner(cast(dict[str, object], value))
                         self.writer.write_uint8(ValueType.END)
                     case str() as string:
+                        if len(string) >= 128:
+                            raise ValueError("UTF-8 strings longer than 127 characters are not supported by the schema ")
                         self.writer.write_uint8(ValueType.STRING)
                         self.writer.write_utf8_string(key)
                         self.writer.write_utf8_string(string)

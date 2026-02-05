@@ -45,10 +45,15 @@ class Reader:
         return struct.unpack("<Q", self.__read_raw(4))[0]
 
     def read_utf8_string(self : Self) -> str:
-        raw_string : bytes = bytes(takewhile(lambda byte : byte != 0, self.contents[self.pointer:]))
+        raw_string : bytes = self.contents[self.pointer : self.pointer + 128]
+        raw_string = bytes(takewhile(lambda byte : byte != 0, raw_string))
+
         string : str = raw_string.decode("utf-8")
         self.pointer += len(raw_string) + 1
-
-        assert self.pointer < len(self.contents), "Read past ends of array"
+        
         if self.contents[self.pointer - 1] == 0: return string
-        raise EOFError("Expected null-terminated UTF-8 string, reached EOF instead.")
+
+        if len(string) < 128:
+            raise EOFError("Expected null-terminated UTF-8 string, reached EOF instead.")
+        else:
+            raise ValueError("UTF-8 strings longer than 127 characters are not supported by the schema ")
