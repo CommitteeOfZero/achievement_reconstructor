@@ -32,4 +32,5 @@ Not to be confused with `UserGameStats_<userId>_<appId>.bin`, which contain the 
 ### Credits
 
 - SamRewritten: https://github.com/PaulCombal/SamRewritten
+
 Given work already had been put in to reverse-engineer Steam's achievement schema format, their implementation of the schema parser was used as reference for our own. The relevant file can be found [here](https://github.com/PaulCombal/SamRewritten/blob/master/src/backend/key_value.rs).
