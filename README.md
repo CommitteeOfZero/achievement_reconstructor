@@ -22,7 +22,12 @@ options:
   -o, --output PATH     destination folder (defaults to working directory)
 ```
 
-**Warning:** The current tool expects both binary and YAML input files to be in the format `UserGameStatsSchema_<appId>.{bin,yaml}`, depending on whether you're *deconstructing* (`.bin` -> `.yaml`)  or *reconstructing* (`.yaml` -> `.bin`).
+**Warning:** The current tool expects both binary and YAML input files to be in the format `UserGameStatsSchema_<appId>.{bin,yaml}`, depending on whether you're *deconstructing* (`.bin` -> `.yaml`)  or *reconstructing* (`.yaml` -> `.bin`). These files can be found in:
+- Windows: `C:\Program Files (x86)\Steam\appcache\stats\`
+- Linux: `~/.local/share/Steam/appcache/stats/`
+- Mac: `~/Library/Application Support/Steam/appcache/stats/`
+
+Not to be confused with `UserGameStats_<userId>_<appId>.bin`, which contain the achievement progress for each local Steam user for each Steam game.
 
 ### Credits
 
